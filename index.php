@@ -20,5 +20,15 @@ $f3->route('GET /', function() {
     echo $view->render('views/home.html');
 });
 
+//Define form route
+$f3->route('GET /apply', function() {
+
+    //Create instance of Template
+    $view = new Template();
+
+    //Render $view
+    echo $view->render('views/info.html');
+});
+
 //Run $f3
 $f3->run();
