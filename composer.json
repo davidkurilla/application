@@ -1,0 +1,12 @@
+{
+  "name": "bcosca/application",
+  "authors": [
+    {
+      "name": "David Kurilla",
+      "email": "kurilla.david@student.greenriver.edu"
+    }
+  ],
+  "require": {
+    "bcosca/fatfree-core": "dev-master"
+  }
+}
