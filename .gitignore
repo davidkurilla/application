@@ -1,4 +1,5 @@
 # Directories to ignore
+tmp/
 vendor/
 
 # Files to ignore
