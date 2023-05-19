@@ -19,3 +19,6 @@ $f3->route('GET /', function() {
     //Render $view
     echo $view->render('views/home.html');
 });
+
+//Run $f3
+$f3->run();
