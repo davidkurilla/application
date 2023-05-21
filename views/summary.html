@@ -8,13 +8,26 @@
     <hr>
     <div class="row">
       <div class="col">
-        <include href="views/includes/summary_include.php"></include> <!-- TODO: Remove Include -->
+          <p><b>Name: </b> {{@SESSION.fname}} {{@SESSION.lname}}</p>
+          <hr>
+          <p><b>Email: </b> {{@SESSION.email}}</p>
+          <hr>
+          <p><b>State: </b> {{@SESSION.state}}</p>
+          <p><b>Phone: </b> {{@SESSION.phone}}</p>
+          <hr>
+          <p><b>GitHub Link: </b> {{@SESSION.github}}</p>
+          <p><b>Experience: </b> {{@SESSION.years}} years</p>
+          <hr>
+          <p><b>Willing to Relocate: {{@SESSION.relocate}}</b></p>
+          <p><b>Mailing Lists: </b>
+              {{@SESSION.mailing}}
+          </p>
       </div>
       <div class="col">
         <img class="d-block rounded-circle" src="images/blank_profile_pic.jpg">
         <h2>Summary</h2>
         <hr>
-        <include href="views/includes/bio_include.php"></include>
+          <p>{{@SESSION.bio}}</p>
       </div>
     </div>
   <div class="mt-3 mb-3 text-center">
