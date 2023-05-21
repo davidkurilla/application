@@ -6,6 +6,7 @@ error_reporting(E_ALL);
 
 //Require autoload.php
 require_once('vendor/autoload.php');
+require_once('model/validations.php');
 
 //Create instance of Base
 $f3 = Base::instance();
@@ -45,13 +46,35 @@ $f3->route('GET|POST /info', function($f3) {
         if(isset($_POST['state'])) {$state = $_POST['state'];}
         if(isset($_POST['phone'])) {$phone = $_POST['phone'];}
 
-        $f3->set('SESSION.fname', $fname);
-        $f3->set('SESSION.lname', $lname);
-        $f3->set('SESSION.email', $email);
-        $f3->set('SESSION.state', $state);
-        $f3->set('SESSION.phone', $phone);
+        if(validName($fname)) {
+            $f3->set('SESSION.fname', $fname);
+        } else {
+            $f3->set('errors["fname"]', 'invalid first name! Names cannot contain numbers.');
+            echo $f3->get('errors["fname"]');
+        }
+        if(validName($lname)) {
+            $f3->set('SESSION.lname', $lname);
+        } else {
+            $f3->set('errors["lname"]', 'invalid last name! Names cannot contain numbers.');
+            echo $f3->get('errors["lname"]');
+        }
+        if(validEmail($email)) {
+            $f3->set('SESSION.email', $email);
+        } else {
+            $f3->set('errors["email"]', 'invalid email!');
+            echo $f3->get('errors["email"]');
+        }
 
-        $f3->reroute('/experience');
+        $f3->set('SESSION.state', $state);
+
+        if(validPhone($phone)) {
+            $f3->set('SESSION.phone', $phone);
+        } else {
+            $f3->set('errors["phone"]', 'invalid phone number!');
+            echo $f3->get('errors["phone"]');
+        }
+
+        if(empty($f3->get("errors"))) {$f3->reroute('/experience');}
     }
 
 });
@@ -80,11 +103,25 @@ $f3->route('GET|POST /experience', function($f3) {
         if(isset($_POST['relocate'])) {$relocate = $_POST['relocate'];}
 
         $f3->set('SESSION.bio', $bio);
-        $f3->set('SESSION.github', $github);
-        $f3->set('SESSION.years', $years);
+
+        if(validGithub($github)) {
+            $f3->set('SESSION.github', $github);
+        } else {
+            $f3->set('errors["github"]', 'invalid link!');
+            echo $f3->get('errors["github"]');
+        }
+
+        if(validExperience($years)) {
+            $f3->set('SESSION.years', $years);
+        } else {
+            $f3->set('errors["years"]', 'invalid selection!');
+            echo $f3->get('errors["years"]');
+        }
+
+
         $f3->set('SESSION.relocate', $relocate);
 
-        $f3->reroute('/mailing_lists');
+        if(empty($f3->get("errors"))) {$f3->reroute('/mailing_lists');}
     }
 });
 
@@ -105,9 +142,16 @@ $f3->route('GET|POST /mailing_lists', function($f3) {
 
         if(isset($_POST['mailing'])) {$mailing = $_POST['mailing'];}
 
-        $f3->set('SESSION.mailing', implode(", ", $mailing));
+        if(validSelectionsJobs($mailing) && validSelectionsVerticals($mailing)) {
+            $f3->set('SESSION.mailing', implode(", ", $mailing));
+        } else {
+            $f3->set('errors["mailing"]', 'invalid selection(s)!');
+            echo $f3->get('errors["mailing"]');
+        }
 
-        $f3->reroute('/summary');
+        if(empty($f3->get("errors"))) {
+            $f3->reroute('/summary');
+        }
     }
 });
 
