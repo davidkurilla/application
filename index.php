@@ -10,25 +10,17 @@ require_once('model/validations.php');
 
 //Create instance of Base
 $f3 = Base::instance();
+$controller = new Controller($f3);
 
 //Define default route
 $f3->route('GET /', function() {
-
-    //Create instance of Template
-    $view = new Template();
-
-    //Render $view
-    echo $view->render('views/home.html');
+    $GLOBALS['controller']->route('views/home.html');
 });
 
 //Define info form route
 $f3->route('GET|POST /info', function($f3) {
 
-    //Create instance of Template
-    $view = new Template();
-
-    //Render $view
-    echo $view->render('views/info.html');
+    $GLOBALS['controller']->route('views/info.html');
 
     //Variables
     $fname = "";
@@ -36,6 +28,7 @@ $f3->route('GET|POST /info', function($f3) {
     $email = "";
     $state = "";
     $phone = "";
+    $mailSignUp = "";
 
     //Reroute to experience
     if($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -45,6 +38,8 @@ $f3->route('GET|POST /info', function($f3) {
         if(isset($_POST['email'])) {$email = $_POST['email'];}
         if(isset($_POST['state'])) {$state = $_POST['state'];}
         if(isset($_POST['phone'])) {$phone = $_POST['phone'];}
+        if(isset($_POST['true'])) {$mailSignUp = $_POST['true'];}
+
 
         if(validName($fname)) {
             $f3->set('SESSION.fname', $fname);
@@ -73,6 +68,7 @@ $f3->route('GET|POST /info', function($f3) {
             $f3->set('errors["phone"]', 'invalid phone number!');
             echo $f3->get('errors["phone"]');
         }
+        $f3->set('SESSION.mailSignUp', $mailSignUp);
 
         if(empty($f3->get("errors"))) {$f3->reroute('/experience');}
     }
@@ -121,18 +117,20 @@ $f3->route('GET|POST /experience', function($f3) {
 
         $f3->set('SESSION.relocate', $relocate);
 
-        if(empty($f3->get("errors"))) {$f3->reroute('/mailing_lists');}
+        if(empty($f3->get("errors"))) {
+            if($f3->get('SESSION.mailSignUp') != 'true') {
+                $f3->reroute('/summary');
+            } else {
+                $f3->reroute('/mailing_lists');
+            }
+        }
     }
 });
 
 //Define mailing list form route
 $f3->route('GET|POST /mailing_lists', function($f3) {
 
-    //Create instance of Template
-    $view = new Template();
-
-    //Render $view
-    echo $view->render('views/mailing_lists.html');
+    $GLOBALS['controller']->route('views/mailing_lists.html');
 
     //Variables
     $mailing = array();
@@ -157,12 +155,7 @@ $f3->route('GET|POST /mailing_lists', function($f3) {
 
 //Define summary form route
 $f3->route('GET|POST /summary', function($f3) {
-
-    //Create instance of Template
-    $view = new Template();
-
-    //Render $view
-    echo $view->render('views/summary.html');
+    $GLOBALS['controller']->route('views/summary.html');
 });
 
 //Run $f3
