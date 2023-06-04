@@ -20,7 +20,9 @@
           <hr>
           <p><b>Willing to Relocate: {{@SESSION.relocate}}</b></p>
           <p><b>Mailing Lists: </b>
-              {{@SESSION.mailing}}
+              <check if="{{ isset(@SESSION.mailing) }}">
+                  {{@SESSION.mailing}}
+              </check>
           </p>
       </div>
       <div class="col">
@@ -31,7 +33,7 @@
       </div>
     </div>
   <div class="mt-3 mb-3 text-center">
-    <button class="col btn btn-primary">Submit Application</button> <!-- TODO: Remove Include -->
+    <button class="col btn btn-primary">Submit Application</button>
   </div>
 </main>
 

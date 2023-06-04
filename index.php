@@ -28,7 +28,6 @@ $f3->route('GET|POST /info', function($f3) {
     $email = "";
     $state = "";
     $phone = "";
-    $mailSignUp = "";
 
     //Reroute to experience
     if($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -38,22 +37,22 @@ $f3->route('GET|POST /info', function($f3) {
         if(isset($_POST['email'])) {$email = $_POST['email'];}
         if(isset($_POST['state'])) {$state = $_POST['state'];}
         if(isset($_POST['phone'])) {$phone = $_POST['phone'];}
-        if(isset($_POST['true'])) {$mailSignUp = $_POST['true'];}
+        if(isset($_POST['true'])) {$f3->set('SESSION.true', $_POST['true']);}
 
 
-        if(validName($fname)) {
+        if(Model::validName($fname)) {
             $f3->set('SESSION.fname', $fname);
         } else {
             $f3->set('errors["fname"]', 'invalid first name! Names cannot contain numbers.');
             echo $f3->get('errors["fname"]');
         }
-        if(validName($lname)) {
+        if(Model::validName($lname)) {
             $f3->set('SESSION.lname', $lname);
         } else {
             $f3->set('errors["lname"]', 'invalid last name! Names cannot contain numbers.');
             echo $f3->get('errors["lname"]');
         }
-        if(validEmail($email)) {
+        if(Model::validEmail($email)) {
             $f3->set('SESSION.email', $email);
         } else {
             $f3->set('errors["email"]', 'invalid email!');
@@ -62,15 +61,35 @@ $f3->route('GET|POST /info', function($f3) {
 
         $f3->set('SESSION.state', $state);
 
-        if(validPhone($phone)) {
+        if(Model::validPhone($phone)) {
             $f3->set('SESSION.phone', $phone);
         } else {
             $f3->set('errors["phone"]', 'invalid phone number!');
             echo $f3->get('errors["phone"]');
         }
-        $f3->set('SESSION.mailSignUp', $mailSignUp);
 
-        if(empty($f3->get("errors"))) {$f3->reroute('/experience');}
+        if(empty($f3->get("errors"))) {
+            if(isset($_POST['true']))
+            {
+                $applicant = new Applicant_SubscribedToLists(
+                    $fname,
+                    $lname,
+                    $email,
+                    $state,
+                    $phone
+                );
+            } else {
+                $applicant = new Applicant(
+                    $fname,
+                    $lname,
+                    $email,
+                    $state,
+                    $phone
+                );
+            }
+            $f3->set('SESSION.applicant', $applicant);
+            $f3->reroute('/experience');
+        }
     }
 
 });
@@ -100,14 +119,14 @@ $f3->route('GET|POST /experience', function($f3) {
 
         $f3->set('SESSION.bio', $bio);
 
-        if(validGithub($github)) {
+        if(Model::validGithub($github)) {
             $f3->set('SESSION.github', $github);
         } else {
             $f3->set('errors["github"]', 'invalid link!');
             echo $f3->get('errors["github"]');
         }
 
-        if(validExperience($years)) {
+        if(Model::validExperience($years)) {
             $f3->set('SESSION.years', $years);
         } else {
             $f3->set('errors["years"]', 'invalid selection!');
@@ -118,10 +137,16 @@ $f3->route('GET|POST /experience', function($f3) {
         $f3->set('SESSION.relocate', $relocate);
 
         if(empty($f3->get("errors"))) {
-            if($f3->get('SESSION.mailSignUp') != 'true') {
-                $f3->reroute('/summary');
-            } else {
+
+            $f3->get('SESSION.applicant')->setGithub($github);
+            $f3->get('SESSION.applicant')->setExperience($years);
+            $f3->get('SESSION.applicant')->setRelocate($relocate);
+            $f3->get('SESSION.applicant')->setBio($bio);
+
+            if($f3->get('SESSION.true') === 'true') {
                 $f3->reroute('/mailing_lists');
+            } else {
+                $f3->reroute('/summary');
             }
         }
     }
@@ -140,7 +165,7 @@ $f3->route('GET|POST /mailing_lists', function($f3) {
 
         if(isset($_POST['mailing'])) {$mailing = $_POST['mailing'];}
 
-        if(validSelectionsJobs($mailing) && validSelectionsVerticals($mailing)) {
+        if(Model::validSelectionsJobs($mailing) && Model::validSelectionsVerticals($mailing)) {
             $f3->set('SESSION.mailing', implode(", ", $mailing));
         } else {
             $f3->set('errors["mailing"]', 'invalid selection(s)!');

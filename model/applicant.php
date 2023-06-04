@@ -23,6 +23,7 @@ class Applicant
      * @param string $relocate the relocation status
      * @param string $bio the biography
      */
+
     function __construct($fname, $lname, $email, $state, $phone)
     {
         $this->_fname = $fname;
