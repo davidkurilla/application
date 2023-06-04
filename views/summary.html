@@ -8,20 +8,20 @@
     <hr>
     <div class="row">
       <div class="col">
-          <p><b>Name: </b> {{@SESSION.fname}} {{@SESSION.lname}}</p>
+          <p><b>Name: </b> {{@SESSION.applicant->getFname()}} {{@SESSION.applicant->getLname()}}</p>
           <hr>
-          <p><b>Email: </b> {{@SESSION.email}}</p>
+          <p><b>Email: </b> {{@SESSION.applicant->getEmail()}}</p>
           <hr>
-          <p><b>State: </b> {{@SESSION.state}}</p>
-          <p><b>Phone: </b> {{@SESSION.phone}}</p>
+          <p><b>State: </b> {{@SESSION.applicant->getState()}}</p>
+          <p><b>Phone: </b> {{@SESSION.applicant->getPhone()}}</p>
           <hr>
-          <p><b>GitHub Link: </b> {{@SESSION.github}}</p>
-          <p><b>Experience: </b> {{@SESSION.years}} years</p>
+          <p><b>GitHub Link: </b> {{@SESSION.applicant->getGithub()}}</p>
+          <p><b>Experience: </b> {{@SESSION.applicant->getExperience()}} years</p>
           <hr>
-          <p><b>Willing to Relocate: {{@SESSION.relocate}}</b></p>
+          <p><b>Willing to Relocate: {{@SESSION.applicant->getRelocate()}}</b></p>
           <p><b>Mailing Lists: </b>
               <check if="{{ isset(@SESSION.mailing) }}">
-                  {{@SESSION.mailing}}
+                  {{implode(",", @SESSION.applicant->getSelectionsJobs())}}
               </check>
           </p>
       </div>
@@ -29,7 +29,7 @@
         <img class="d-block rounded-circle" src="images/blank_profile_pic.jpg">
         <h2>Summary</h2>
         <hr>
-          <p>{{@SESSION.bio}}</p>
+          <p>{{@SESSION.applicant->getBio()}}</p>
       </div>
     </div>
   <div class="mt-3 mb-3 text-center">

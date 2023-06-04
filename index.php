@@ -37,7 +37,7 @@ $f3->route('GET|POST /info', function($f3) {
         if(isset($_POST['email'])) {$email = $_POST['email'];}
         if(isset($_POST['state'])) {$state = $_POST['state'];}
         if(isset($_POST['phone'])) {$phone = $_POST['phone'];}
-        if(isset($_POST['true'])) {$f3->set('SESSION.true', $_POST['true']);}
+        if(isset($_POST['optin'])) {$f3->set('SESSION.optin', $_POST['optin']);}
 
 
         if(Model::validName($fname)) {
@@ -69,7 +69,7 @@ $f3->route('GET|POST /info', function($f3) {
         }
 
         if(empty($f3->get("errors"))) {
-            if(isset($_POST['true']))
+            if(isset($_POST['optin']))
             {
                 $applicant = new Applicant_SubscribedToLists(
                     $fname,
@@ -143,7 +143,7 @@ $f3->route('GET|POST /experience', function($f3) {
             $f3->get('SESSION.applicant')->setRelocate($relocate);
             $f3->get('SESSION.applicant')->setBio($bio);
 
-            if($f3->get('SESSION.true') === 'true') {
+            if($f3->get('SESSION.optin') === 'true') {
                 $f3->reroute('/mailing_lists');
             } else {
                 $f3->reroute('/summary');
@@ -173,6 +173,8 @@ $f3->route('GET|POST /mailing_lists', function($f3) {
         }
 
         if(empty($f3->get("errors"))) {
+            $f3->get('SESSION.applicant')->setSelectionsJobs($mailing);
+            $f3->get('SESSION.applicant')->setSelectionsVerticals($mailing);
             $f3->reroute('/summary');
         }
     }
