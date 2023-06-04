@@ -69,7 +69,7 @@ $f3->route('GET|POST /info', function($f3) {
         }
 
         if(empty($f3->get("errors"))) {
-            if(isset($_POST['optin']))
+            if($f3->get('SESSION.optin') === 'true')
             {
                 $applicant = new Applicant_SubscribedToLists(
                     $fname,
